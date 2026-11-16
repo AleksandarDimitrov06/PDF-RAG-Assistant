@@ -1,0 +1,59 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant_db
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs_storage
+    command: /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+    volumes:
+      - rustfs_data:/data
+    restart: unless-stopped
+
+  fastapi:
+    build: .
+    container_name: fastapi_rag_api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      RUSTFS_ENDPOINT: http://rustfs:9000
+      RUSTFS_BUCKET: documents
+    depends_on:
+      - qdrant
+      - rustfs
+    restart: unless-stopped
+
+  streamlit:
+    build: .
+    container_name: streamlit_rag_app
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://fastapi:8000
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
+volumes:
+  rustfs_data:
