@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 from backend.config import settings
 
-class ObjectStorageService:
+class RustFSService:
     def __init__(self):
         self.bucket = settings.rustfs_bucket
         self.client = boto3.client(

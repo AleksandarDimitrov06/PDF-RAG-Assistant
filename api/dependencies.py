@@ -1,12 +1,12 @@
 from backend.llm import LLMService
 from backend.vectorstore import QdrantService
 from backend.RAG_logic import RAGCore
-from backend.object_storage import ObjectStorageService
+from backend.RustFSService import RustFSService
 
 llm_service = LLMService()
 vector_service = QdrantService(embeddings=llm_service.embeddings)
 rag_builder = RAGCore(llm_service=llm_service)
-object_storage_service = ObjectStorageService()
+rustfs_service = RustFSService()
 
 
 def get_vector_service() -> QdrantService:
@@ -15,5 +15,5 @@ def get_vector_service() -> QdrantService:
 def get_rag_builder() -> RAGCore:
     return rag_builder
 
-def get_object_storage_service() -> ObjectStorageService:
-    return object_storage_service
+def get_rustfs_service() -> RustFSService:
+    return rustfs_service

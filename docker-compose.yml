@@ -6,7 +6,7 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./qdrant_storage:/qdrant/storage
+      - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
   rustfs:
@@ -56,4 +56,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  qdrant_data:
   rustfs_data:
+  
