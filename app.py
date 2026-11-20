@@ -72,7 +72,14 @@ if pdf_file is not None:
                     response.raise_for_status()
                     answer = response.json()["answer"]
                 except requests.RequestException as exc:
-                    answer = f"Could not query the API: {exc}"
+                    if exc.response is not None:
+                        try:
+                            detail = exc.response.json().get("detail")
+                            answer = detail or str(exc)
+                        except ValueError:
+                            answer = str(exc)
+                    else:
+                        answer = str(exc)
 
                 st.write(answer)
 

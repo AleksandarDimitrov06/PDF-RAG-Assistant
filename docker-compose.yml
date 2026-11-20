@@ -55,6 +55,15 @@ services:
       - fastapi
     restart: unless-stopped
 
+  frontend:
+    build: ./frontend
+    container_name: react_rag_app
+    ports:
+      - "3000:80"
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
 volumes:
   qdrant_data:
   rustfs_data:

@@ -7,9 +7,9 @@ from backend.memory import get_session_history
 
 
 class RAGCore:
-    def __init__(self,llm_service):
-        self.llm = llm_service.llm
-        self.question_rewrite_llm = llm_service.question_rewrite_llm
+    def __init__(self,llms_service):
+        self.llm = llms_service.llm
+        self.question_rewrite_llm = llms_service.question_rewrite_llm
     
     def build_rag_chain(self, retriever):
 
@@ -30,13 +30,11 @@ class RAGCore:
         )
 
 
-
         prompt = ChatPromptTemplate.from_messages([
             ("system",
              "You are a helpful assistant. Answer the question using ONLY the "
-             "context below. Be concise. If the answer is not in the context, "
-             "say you do not know. If the question is not related to the context, "
-             "politely respond: I amtuned to only answer questions that are related to the context. "
+             "context below. Be concise. If the answer is not in the context "
+             "say: 'I don't have that information'."
              "\n\nContext:\n{context}"),
              MessagesPlaceholder("chat_history"),
             ("human", "{input}"),
